@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
@@ -31,6 +32,14 @@ public class DocumentController implements Initializable {
     private TableView byVolumeTableView;
     @FXML
     private TableView bySpeedTableView;
+    @FXML
+    private Label highestVolLabel;
+    @FXML
+    private Label highestVolValueLabel;
+    @FXML
+    private Label lowestVolLabel;
+    @FXML
+    private Label lowestVolValueLabel;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -56,6 +65,10 @@ public class DocumentController implements Initializable {
         }
         levelOfServiceEntityList = trafficLevelOfServiceDAO.getTopTrafficVolume(startText.getText(), endText.getText(), 5);
 
+        highestVolLabel.setText(levelOfServiceEntityList.get(0).facility);
+        highestVolValueLabel.setText(String.valueOf(levelOfServiceEntityList.get(0).volume));
+        lowestVolLabel.setText(levelOfServiceEntityList.get(levelOfServiceEntityList.size() - 1).facility);
+        lowestVolValueLabel.setText(String.valueOf(levelOfServiceEntityList.get(levelOfServiceEntityList.size() - 1).volume));
         ArrayList<LevelOfServiceEntityFX> levelOfServiceEntityListFX = new ArrayList<LevelOfServiceEntityFX>();
         levelOfServiceEntityList.forEach(levelOfServiceEntity -> {
             levelOfServiceEntityListFX.add(new LevelOfServiceEntityFX(

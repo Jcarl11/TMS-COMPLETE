@@ -16,18 +16,18 @@
             <Font size="18.0" />
          </font>
       </Label>
-      <TableView fx:id="byVolumeTableView" layoutX="35.0" layoutY="118.0" prefHeight="242.0" prefWidth="431.0" style="-fx-focus-color: -fx-box-border; -fx-faint-focus-color: transparent;">
+      <TableView fx:id="byVolumeTableView" layoutX="52.0" layoutY="126.0" prefHeight="200.0" prefWidth="400.0" style="-fx-focus-color: -fx-box-border; -fx-faint-focus-color: transparent;">
          <cursor>
             <Cursor fx:constant="DEFAULT" />
          </cursor>
       </TableView>
-      <TableView fx:id="bySpeedTableView" layoutX="37.0" layoutY="457.0" prefHeight="242.0" prefWidth="431.0" style="-fx-focus-color: -fx-box-border; -fx-faint-focus-color: transparent;" />
-      <Label layoutX="158.0" layoutY="75.0" text="Top facilities by volume">
+      <TableView fx:id="bySpeedTableView" layoutX="52.0" layoutY="495.0" prefHeight="200.0" prefWidth="400.0" style="-fx-focus-color: -fx-box-border; -fx-faint-focus-color: transparent;" />
+      <Label layoutX="158.0" layoutY="89.0" text="Top facilities by volume">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <Label layoutX="156.0" layoutY="415.0" text="Top facilities by speed">
+      <Label layoutX="156.0" layoutY="458.0" text="Top facilities by speed">
          <font>
             <Font size="18.0" />
          </font>
@@ -56,5 +56,35 @@
             <Font size="12.0" />
          </font>
       </Text>
+      <Label layoutX="63.0" layoutY="360.0" style="-fx-font-weight: bold;" text="Highest Volume">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="69.0" layoutY="396.0" style="-fx-font-weight: bold;" text="Lowest Volume">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="highestVolLabel" layoutX="214.0" layoutY="360.0" text="0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lowestVolLabel" layoutX="213.0" layoutY="396.0" text="0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="highestVolValueLabel" layoutX="343.0" layoutY="360.0" text="0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="lowestVolValueLabel" layoutX="343.0" layoutY="396.0" text="0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
