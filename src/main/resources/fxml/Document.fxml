@@ -86,5 +86,7 @@
             <Font size="18.0" />
          </font>
       </Label>
+      <Label layoutX="52.0" layoutY="746.0" text="Prepared by:" />
+      <Label fx:id="document_username" layoutX="52.0" layoutY="769.0" style="-fx-font-weight: bold;" text="Username" />
    </children>
 </AnchorPane>

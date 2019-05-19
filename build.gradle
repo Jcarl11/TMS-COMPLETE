@@ -13,7 +13,7 @@ plugins {
 
 apply plugin: 'application'
 
-def openCvLibFolder="C:\\Users\\dominjav\\eclipse-workspace\\TrafficMonitoringSystem\\libs\\opencv\\x64"
+def openCvLibFolder="${project.projectDir}\\libs\\opencv\\x64"
 
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.

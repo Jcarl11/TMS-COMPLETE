@@ -43,7 +43,13 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.logging.Level;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import org.asynchttpclient.Response;
 
 import static org.opencv.imgproc.Imgproc.resize;
@@ -58,12 +64,55 @@ public class DashboardController {
 
     private volatile boolean loopBreaker = false;
     private boolean onSync = false;
-
+    private Size imageSize = new Size(684, 310);
     private int areaThreshold = 1700;
     private double imageThreshold = 16;
     private int history = 500;
     private int vehicleSizeThreshold = 20000;
-
+    ContextMenu contextMenu = new ContextMenu();
+    ContextMenu contextMenu1 = new ContextMenu();
+    ContextMenu contextMenu2 = new ContextMenu();
+    ContextMenu contextMenu3 = new ContextMenu();
+    
+    MenuItem item_chooseVideo = new MenuItem("Choose video");
+    MenuItem item_setArea = new MenuItem("Set area name");
+    MenuItem item_setInterrupted = new MenuItem("Interrupted");
+    MenuItem item_drawCounter = new MenuItem("Draw counter line");
+    MenuItem item_drawSpeed = new MenuItem("Draw speed line");
+    MenuItem item_play = new MenuItem("Play");
+    MenuItem item_reset = new MenuItem("Reset");
+    MenuItem item_showCounters = new MenuItem("Show counters");
+    
+    MenuItem item_chooseVideo1 = new MenuItem("Choose video");
+    MenuItem item_setArea1 = new MenuItem("Set area name");
+    MenuItem item_setInterrupted1 = new MenuItem("Interrupted");
+    MenuItem item_drawCounter1 = new MenuItem("Draw counter line");
+    MenuItem item_drawSpeed1 = new MenuItem("Draw speed line");
+    MenuItem item_play1 = new MenuItem("Play");
+    MenuItem item_reset1 = new MenuItem("Reset");
+    MenuItem item_showCounters1 = new MenuItem("Show counters");
+    
+    MenuItem item_chooseVideo2 = new MenuItem("Choose video");
+    MenuItem item_setArea2 = new MenuItem("Set area name");
+    MenuItem item_setInterrupted2 = new MenuItem("Interrupted");
+    MenuItem item_drawCounter2 = new MenuItem("Draw counter line");
+    MenuItem item_drawSpeed2 = new MenuItem("Draw speed line");
+    MenuItem item_play2 = new MenuItem("Play");
+    MenuItem item_reset2 = new MenuItem("Reset");
+    MenuItem item_showCounters2 = new MenuItem("Show counters");
+    
+    MenuItem item_chooseVideo3 = new MenuItem("Choose video");
+    MenuItem item_setArea3 = new MenuItem("Set area name");
+    MenuItem item_setInterrupted3 = new MenuItem("Interrupted");
+    MenuItem item_drawCounter3 = new MenuItem("Draw counter line");
+    MenuItem item_drawSpeed3 = new MenuItem("Draw speed line");
+    MenuItem item_play3 = new MenuItem("Play");
+    MenuItem item_reset3 = new MenuItem("Reset");
+    MenuItem item_showCounters3 = new MenuItem("Show counters");
+    
+    
+    
+    //Video Frame 1
     private VideoCapture capture;
     private Mat currentImage = new Mat();
     private VideoProcessor videoProcessor = new MixtureOfGaussianBackground(imageThreshold, history);
@@ -216,15 +265,9 @@ public class DashboardController {
     @FXML
     private CheckBox interruptedCheckBox;
     @FXML
-    private Button counterLineButton;
-    @FXML
-    private Button speedLineButton;
-    @FXML
     private Button syncButton;
     @FXML
     private JFXProgressBar syncCloudProgressBar;
-    @FXML
-    private Button chooseFileButton;
     @FXML
     private TextField filePathTextField;
     @FXML
@@ -232,29 +275,15 @@ public class DashboardController {
     @FXML
     private Button viewReportButton;
     @FXML
-    private Button playPauseButton;
-    @FXML
-    private Button resetButton;
-    @FXML
     private TextField quantityTextField;
     @FXML
     private TextField avgSpeedTextField;
     @FXML
-    private Button chooseFileButton1;
-    @FXML
     private TextField filePathTextField1;
-    @FXML
-    private Button playPauseButton1;
-    @FXML
-    private Button resetButton1;
     @FXML
     private TextField quantityTextField1;
     @FXML
     private TextField avgSpeedTextField1;
-    @FXML
-    private Button counterLineButton1;
-    @FXML
-    private Button speedLineButton1;
     @FXML
     private ImageView videoContainerImageView1;
     @FXML
@@ -272,17 +301,7 @@ public class DashboardController {
     @FXML
     private TextField avgSpeedTextField2;
     @FXML
-    private Button playPauseButton2;
-    @FXML
-    private Button resetButton2;
-    @FXML
-    private Button chooseFileButton2;
-    @FXML
     private TextField areaTextField2;
-    @FXML
-    private Button counterLineButton2;
-    @FXML
-    private Button speedLineButton2;
     @FXML
     private CheckBox interruptedCheckBox2;
     @FXML
@@ -294,388 +313,75 @@ public class DashboardController {
     @FXML
     private TextField avgSpeedTextField3;
     @FXML
-    private Button playPauseButton3;
-    @FXML
-    private Button resetButton3;
-    @FXML
-    private Button chooseFileButton3;
-    @FXML
     private TextField areaTextField3;
     @FXML
-    private Button counterLineButton3;
-    @FXML
-    private Button speedLineButton3;
-    @FXML
     private CheckBox interruptedCheckBox3;
+    @FXML
+    private AnchorPane rootpane;
+    @FXML
+    private AnchorPane anchorpane_counters;
+    @FXML
+    private AnchorPane anchorpane_counters1;
+    @FXML
+    private AnchorPane anchorpane_counters2;
+    @FXML
+    private AnchorPane anchorpane_counters3;
+    @FXML
+    private GridPane gridpane_container;
+    @FXML
+    private AnchorPane anchorpane_one;
+    @FXML
+    private AnchorPane anchorpane_two;
+    @FXML
+    private AnchorPane anchorpane_three;
+    @FXML
+    private AnchorPane anchorpane_four;
 
 
     public void initialize() {
 
         log.info("initialize window.");
-        playPauseButton.setDisable(true);
-        counterLineButton.setDisable(true);
-        speedLineButton.setDisable(true);
-        resetButton.setDisable(true);
-        playPauseButton1.setDisable(true);
-        counterLineButton1.setDisable(true);
-        speedLineButton1.setDisable(true);
-        resetButton1.setDisable(true);
-        playPauseButton2.setDisable(true);
-        counterLineButton2.setDisable(true);
-        speedLineButton2.setDisable(true);
-        resetButton2.setDisable(true);
-        playPauseButton3.setDisable(true);
-        counterLineButton3.setDisable(true);
-        speedLineButton3.setDisable(true);
-        resetButton3.setDisable(true);
+        item_play.setDisable(true);
+        item_drawCounter.setDisable(true);
+        item_drawSpeed.setDisable(true);
+        item_reset.setDisable(true);
+        item_play1.setDisable(true);
+        item_drawCounter1.setDisable(true);
+        item_drawSpeed1.setDisable(true);
+        item_reset1.setDisable(true);
+        item_play2.setDisable(true);
+        item_drawCounter2.setDisable(true);
+        item_drawSpeed2.setDisable(true);
+        item_reset2.setDisable(true);
+        item_play3.setDisable(true);
+        item_drawCounter3.setDisable(true);
+        item_drawSpeed3.setDisable(true);
+        item_reset3.setDisable(true);
         syncCloudProgressBar.setVisible(false);
-
+        initMenuItemListeners();
+        initMenuItemListeners1();
+        initMenuItemListeners2();
+        initMenuItemListeners3();
+        contextMenu.getItems().addAll(item_chooseVideo, item_setArea, item_setInterrupted,
+                item_drawCounter, item_drawSpeed, new SeparatorMenuItem(),item_showCounters, 
+                item_play, item_reset);
+        
+        contextMenu1.getItems().addAll(item_chooseVideo1, item_setArea1, item_setInterrupted1,
+                item_drawCounter1, item_drawSpeed1, new SeparatorMenuItem(),item_showCounters1, 
+                item_play1, item_reset1);
+        
+        contextMenu2.getItems().addAll(item_chooseVideo2, item_setArea2, item_setInterrupted2,
+                item_drawCounter2, item_drawSpeed2, new SeparatorMenuItem(),item_showCounters2, 
+                item_play2, item_reset2);
+        
+        contextMenu3.getItems().addAll(item_chooseVideo3, item_setArea3, item_setInterrupted3,
+                item_drawCounter3, item_drawSpeed3, new SeparatorMenuItem(),item_showCounters3, 
+                item_play3, item_reset3);
+        
 //        log.info("initialize database.");
 //        db.createDB();
-
-
     }
 
-    // Event Listener on Button[#counterLineButton].onAction
-    @FXML
-    public void handleCounterLineButtonAction(ActionEvent event) {
-        counterLineButton.setDisable(true);
-        speedLineButton.setDisable(true);
-        mouseListenertIsActive = true;
-        startDraw = false;
-        videoContainerImageView.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call2(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call2(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-    // Event Listener on Button[#speedLineButton].onAction
-    @FXML
-    public void handleSpeedLineButtonAction(ActionEvent event) {
-        counterLineButton.setDisable(true);
-        speedLineButton.setDisable(true);
-        mouseListenertIsActive2 = true;
-        startDraw = false;
-        videoContainerImageView.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call2(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call2(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-    @FXML
-    public void handleCounterLineButtonAction1(ActionEvent event) {
-        counterLineButton1.setDisable(true);
-        speedLineButton1.setDisable(true);
-        mouseListenertIsActive = true;
-        startDraw1 = false;
-        videoContainerImageView1.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call1(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call12(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView1.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call1(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call12(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-
-    @FXML
-    public void handleSpeedLineButtonAction1(ActionEvent event) {
-        counterLineButton1.setDisable(true);
-        speedLineButton1.setDisable(true);
-        mouseListenertIsActive2 = true;
-        startDraw1 = false;
-        videoContainerImageView1.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call1(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call12(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView1.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call1(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call12(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-
-    @FXML
-    private void handleCounterLineButtonAction2(ActionEvent event) {
-        counterLineButton2.setDisable(true);
-        speedLineButton2.setDisable(true);
-        mouseListenertIsActive = true;
-        startDraw2 = false;
-        videoContainerImageView2.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_2(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_22(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView2.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_2(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_22(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-
-    @FXML
-    private void handleSpeedLineButtonAction2(ActionEvent event) {
-        counterLineButton2.setDisable(true);
-        speedLineButton2.setDisable(true);
-        mouseListenertIsActive2 = true;
-        startDraw2 = false;
-        videoContainerImageView2.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_2(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_22(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView2.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_2(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_22(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-    @FXML
-    private void handleCounterLineButtonAction3(ActionEvent event) {
-        counterLineButton3.setDisable(true);
-        speedLineButton3.setDisable(true);
-        mouseListenertIsActive = true;
-        startDraw3 = false;
-        videoContainerImageView3.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_3(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_33(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView3.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_3(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_33(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-
-    @FXML
-    private void handleSpeedLineButtonAction3(ActionEvent event) {
-        counterLineButton3.setDisable(true);
-        speedLineButton3.setDisable(true);
-        mouseListenertIsActive2 = true;
-        startDraw3 = false;
-        videoContainerImageView3.setOnMousePressed(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_3(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_33(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-
-        });
-
-        videoContainerImageView3.setOnMouseMoved(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent me) {
-                if (mouseListenertIsActive) {
-                    call_3(me.getButton(), new Point(me.getX(), me.getY()));
-                } else if (mouseListenertIsActive2) {
-                    call_33(me.getButton(), new Point(me.getX(), me.getY()));
-                }
-            }
-        });
-    }
-    // Event Listener on Button[#chooseFileButton].onAction
-    @FXML
-    public void handleChooseFileButtonAction(ActionEvent event) {
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
-        File selectedFile = fileChooser.showOpenDialog(chooseFileButton.getScene().getWindow());
-
-        if (selectedFile != null) {
-
-            videoPath = selectedFile.getPath();
-            filePathTextField.setText(videoPath);
-            capture = new VideoCapture(videoPath);
-            capture.read(currentImage);
-            videoFPS = capture.get(Videoio.CAP_PROP_FPS);
-            log.debug("videoFPS: " + videoFPS);
-            resize(currentImage, currentImage, new Size(640, 360));
-            updateView(currentImage, 1);
-            if (videoPath != null) {
-                counterLineButton.setDisable(false);
-                speedLineButton.setDisable(false);
-
-                resetButton.setDisable(false);
-                playPauseButton.setDisable(false);
-            }
-        }
-
-    }
-
-    @FXML
-    public void handleChooseFileButtonAction1(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
-        File selectedFile = fileChooser.showOpenDialog(chooseFileButton.getScene().getWindow());
-
-        if (selectedFile != null) {
-
-            videoPath1 = selectedFile.getPath();
-            filePathTextField1.setText(videoPath1);
-            capture1 = new VideoCapture(videoPath1);
-            capture1.read(currentImage1);
-            videoFPS1 = capture1.get(Videoio.CAP_PROP_FPS);
-            log.debug("videoFPS1: " + videoFPS1);
-            resize(currentImage1, currentImage1, new Size(640, 360));
-            updateView(currentImage1, 2);
-            if (videoPath1 != null) {
-                counterLineButton1.setDisable(false);
-                speedLineButton1.setDisable(false);
-
-                resetButton1.setDisable(false);
-                playPauseButton1.setDisable(false);
-            }
-        }
-    }
-    @FXML
-    private void handleChooseFileButtonAction2(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
-        File selectedFile = fileChooser.showOpenDialog(chooseFileButton.getScene().getWindow());
-
-        if (selectedFile != null) {
-
-            videoPath2 = selectedFile.getPath();
-            filePathTextField2.setText(videoPath2);
-            capture2 = new VideoCapture(videoPath2);
-            capture2.read(currentImage2);
-            videoFPS2 = capture2.get(Videoio.CAP_PROP_FPS);
-            log.debug("videoFPS1: " + videoFPS2);
-            resize(currentImage2, currentImage2, new Size(640, 360));
-            updateView(currentImage2, 3);
-            if (videoPath2 != null) {
-                counterLineButton2.setDisable(false);
-                speedLineButton2.setDisable(false);
-
-                resetButton2.setDisable(false);
-                playPauseButton2.setDisable(false);
-            }
-        }
-    }
-
-    @FXML
-    private void handleChooseFileButtonAction3(ActionEvent event) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
-        File selectedFile = fileChooser.showOpenDialog(chooseFileButton.getScene().getWindow());
-
-        if (selectedFile != null) {
-
-            videoPath3 = selectedFile.getPath();
-            filePathTextField3.setText(videoPath3);
-            capture3 = new VideoCapture(videoPath3);
-            capture3.read(currentImage3);
-            videoFPS3 = capture3.get(Videoio.CAP_PROP_FPS);
-            log.debug("videoFPS1: " + videoFPS3);
-            resize(currentImage3, currentImage3, new Size(640, 360));
-            updateView(currentImage3, 4);
-            if (videoPath3 != null) {
-                counterLineButton3.setDisable(false);
-                speedLineButton3.setDisable(false);
-
-                resetButton3.setDisable(false);
-                playPauseButton3.setDisable(false);
-            }
-        }
-    }
-    // Event Listener on Button[#viewReportButton].onAction
     @FXML
     public void handleViewReportButtonAction(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Reports.fxml"));
@@ -686,262 +392,7 @@ public class DashboardController {
         log.info("show reports.");
         stage.show();
     }
-    // Event Listener on Button[#playPauseButton].onAction
-    @FXML
-    public void handlePlayPauseButtonAction(ActionEvent event) {
 
-        if (lineSpeed2 == null && lineCount2 == null) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Invalid Input");
-            alert.setHeaderText("Draw sensor lines");
-            alert.setContentText("Please draw counter line and speed line!");
-
-            alert.showAndWait();
-        } else {
-            if (!isPaused) {
-                isPaused = true;
-                playPauseButton.setText("Play");
-
-                chooseFileButton.setDisable(false);
-
-                counterLineButton.setDisable(false);
-                speedLineButton.setDisable(false);
-
-            } else {
-                isPaused = false;
-                playPauseButton.setText("Pause");
-
-                maxWaitingFPS();
-
-                chooseFileButton.setDisable(true);
-
-                counterLineButton.setDisable(true);
-                speedLineButton.setDisable(true);
-
-            }
-
-            if (!isStarted) {
-                log.info("mainLoop");
-                loopBreaker = false;
-                Thread mainLoop = new Thread(new Loop(1));
-                mainLoop.start();
-                isStarted = true;
-                resetButton.setDisable(false);
-
-            }
-
-
-        }
-
-    }
-    // Event Listener on Button[#resetButton].onAction
-    @FXML
-    public void handleResetButtonAction(ActionEvent event) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Reset Video");
-        alert.setHeaderText("Are you sure you want to reset video?");
-        alert.setContentText(videoPath);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            resetVideo(1);
-            log.info("Video has been reset.");
-            chooseFileButton.setDisable(false);
-
-        } else {
-            // ... user chose CANCEL or closed the dialog
-        }
-    }
-
-
-
-
-
-    @FXML
-    public void handlePlayPauseButtonAction1(ActionEvent event) {
-        if (lineSpeed12 == null && lineCount12 == null) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Invalid Input");
-            alert.setHeaderText("Draw sensor lines");
-            alert.setContentText("Please draw counter line and speed line!");
-
-            alert.showAndWait();
-        } else {
-            if (!isPaused1) {
-                isPaused1 = true;
-                playPauseButton1.setText("Play");
-
-                chooseFileButton1.setDisable(false);
-
-                counterLineButton1.setDisable(false);
-                speedLineButton1.setDisable(false);
-
-            } else {
-                isPaused1 = false;
-                playPauseButton1.setText("Pause");
-
-                maxWaitingFPS1();
-
-                chooseFileButton1.setDisable(true);
-
-                counterLineButton1.setDisable(true);
-                speedLineButton1.setDisable(true);
-
-            }
-
-            if (!isStarted1) {
-                log.info("mainLoop");
-                loopBreaker1 = false;
-                Thread mainLoop = new Thread(new Loop(2));
-                mainLoop.start();
-                isStarted1 = true;
-                resetButton1.setDisable(false);
-
-            }
-        }
-    }
-
-    @FXML
-    public void handleResetButtonAction1(ActionEvent event) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Reset Video");
-        alert.setHeaderText("Are you sure you want to reset video?");
-        alert.setContentText(videoPath);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            resetVideo(2);
-            log.info("Video has been reset.");
-            chooseFileButton1.setDisable(false);
-
-        } else {
-            // ... user chose CANCEL or closed the dialog
-        }
-    }
-
-    @FXML
-    private void handlePlayPauseButtonAction2(ActionEvent event) {
-        if (lineSpeed122 == null && lineCount122 == null) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Invalid Input");
-            alert.setHeaderText("Draw sensor lines");
-            alert.setContentText("Please draw counter line and speed line!");
-
-            alert.showAndWait();
-        } else {
-            if (!isPaused2) {
-                isPaused2 = true;
-                playPauseButton2.setText("Play");
-
-                chooseFileButton2.setDisable(false);
-
-                counterLineButton2.setDisable(false);
-                speedLineButton2.setDisable(false);
-
-            } else {
-                isPaused2 = false;
-                playPauseButton2.setText("Pause");
-
-                maxWaitingFPS2();
-
-                chooseFileButton2.setDisable(true);
-
-                counterLineButton2.setDisable(true);
-                speedLineButton2.setDisable(true);
-
-            }
-
-            if (!isStarted2) {
-                log.info("mainLoop");
-                loopBreaker2 = false;
-                Thread mainLoop = new Thread(new Loop(3));
-                mainLoop.start();
-                isStarted2 = true;
-                resetButton2.setDisable(false);
-
-            }
-        }
-    }
-
-    @FXML
-    private void handleResetButtonAction2(ActionEvent event) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Reset Video");
-        alert.setHeaderText("Are you sure you want to reset video?");
-        alert.setContentText(videoPath);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            resetVideo(3);
-            log.info("Video has been reset.");
-            chooseFileButton2.setDisable(false);
-
-        } else {
-            // ... user chose CANCEL or closed the dialog
-        }
-    }
-
-    @FXML
-    private void handlePlayPauseButtonAction3(ActionEvent event) {
-        if (lineSpeed123 == null && lineCount123 == null) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setTitle("Invalid Input");
-            alert.setHeaderText("Draw sensor lines");
-            alert.setContentText("Please draw counter line and speed line!");
-
-            alert.showAndWait();
-        } else {
-            if (!isPaused3) {
-                isPaused3 = true;
-                playPauseButton3.setText("Play");
-
-                chooseFileButton3.setDisable(false);
-
-                counterLineButton3.setDisable(false);
-                speedLineButton3.setDisable(false);
-
-            } else {
-                isPaused3 = false;
-                playPauseButton3.setText("Pause");
-
-                maxWaitingFPS3();
-
-                chooseFileButton3.setDisable(true);
-
-                counterLineButton3.setDisable(true);
-                speedLineButton3.setDisable(true);
-
-            }
-
-            if (!isStarted3) {
-                log.info("mainLoop");
-                loopBreaker3 = false;
-                Thread mainLoop = new Thread(new Loop(4));
-                mainLoop.start();
-                isStarted3 = true;
-                resetButton3.setDisable(false);
-
-            }
-        }
-    }
-
-    @FXML
-    private void handleResetButtonAction3(ActionEvent event) {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Reset Video");
-        alert.setHeaderText("Are you sure you want to reset video?");
-        alert.setContentText(videoPath);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            resetVideo(4);
-            log.info("Video has been reset.");
-            chooseFileButton3.setDisable(false);
-
-        } else {
-            // ... user chose CANCEL or closed the dialog
-        }
-    }
 
     private void resetVideo(int videoId) {
         if (videoId == 1) {
@@ -953,18 +404,18 @@ public class DashboardController {
             capture = new VideoCapture(videoPath);
             capture.read(currentImage);
             videoFPS = capture.get(Videoio.CAP_PROP_FPS);
-            resize(currentImage, currentImage, new Size(640, 360));
+            resize(currentImage, currentImage, imageSize);
             updateView(currentImage, 1);
 
             isPaused = true;
-            playPauseButton.setText("Play");
-            playPauseButton.setDisable(false);
+            item_play.setText("Play");
+            item_play.setDisable(false);
             videoProcessor = new MixtureOfGaussianBackground(imageThreshold, history);
 
-            resetButton.setDisable(true);
+            item_reset.setDisable(true);
 
-            counterLineButton.setDisable(false);
-            speedLineButton.setDisable(false);
+            item_drawCounter.setDisable(false);
+            item_drawSpeed.setDisable(false);
             lineCount1 = null;
             lineCount2 = null;
             lineSpeed1 = null;
@@ -992,18 +443,18 @@ public class DashboardController {
             capture1 = new VideoCapture(videoPath1);
             capture1.read(currentImage1);
             videoFPS1 = capture1.get(Videoio.CAP_PROP_FPS);
-            resize(currentImage1, currentImage1, new Size(640, 360));
+            resize(currentImage1, currentImage1, imageSize);
             updateView(currentImage1, 2);
 
             isPaused1 = true;
-            playPauseButton1.setText("Play");
-            playPauseButton1.setDisable(false);
+            item_play1.setText("Play");
+            item_play1.setDisable(false);
             videoProcessor1 = new MixtureOfGaussianBackground(imageThreshold, history);
 
-            resetButton1.setDisable(true);
+            item_reset1.setDisable(true);
 
-            counterLineButton1.setDisable(false);
-            speedLineButton1.setDisable(false);
+            item_drawCounter1.setDisable(false);
+            item_drawSpeed1.setDisable(false);
             lineCount11 = null;
             lineCount12 = null;
             lineSpeed11 = null;
@@ -1031,18 +482,18 @@ public class DashboardController {
             capture2 = new VideoCapture(videoPath2);
             capture2.read(currentImage2);
             videoFPS2 = capture2.get(Videoio.CAP_PROP_FPS);
-            resize(currentImage2, currentImage2, new Size(640, 360));
+            resize(currentImage2, currentImage2, imageSize);
             updateView(currentImage2, 3);
 
             isPaused2 = true;
-            playPauseButton2.setText("Play");
-            playPauseButton2.setDisable(false);
+            item_play2.setText("Play");
+            item_play2.setDisable(false);
             videoProcessor2 = new MixtureOfGaussianBackground(imageThreshold, history);
 
-            resetButton2.setDisable(true);
+            item_reset2.setDisable(true);
 
-            counterLineButton2.setDisable(false);
-            speedLineButton2.setDisable(false);
+            item_drawCounter2.setDisable(false);
+            item_drawSpeed2.setDisable(false);
             lineCount112 = null;
             lineCount122 = null;
             lineSpeed112 = null;
@@ -1070,18 +521,18 @@ public class DashboardController {
             capture3 = new VideoCapture(videoPath3);
             capture3.read(currentImage3);
             videoFPS3 = capture3.get(Videoio.CAP_PROP_FPS);
-            resize(currentImage3, currentImage3, new Size(640, 360));
+            resize(currentImage3, currentImage3, imageSize);
             updateView(currentImage3, 4);
 
             isPaused3 = true;
-            playPauseButton3.setText("Play");
-            playPauseButton3.setDisable(false);
+            item_play3.setText("Play");
+            item_play3.setDisable(false);
             videoProcessor3 = new MixtureOfGaussianBackground(imageThreshold, history);
 
-            resetButton3.setDisable(true);
+            item_reset3.setDisable(true);
 
-            counterLineButton3.setDisable(false);
-            speedLineButton3.setDisable(false);
+            item_drawCounter3.setDisable(false);
+            item_drawSpeed3.setDisable(false);
             lineCount113 = null;
             lineCount123 = null;
             lineSpeed113 = null;
@@ -1151,9 +602,828 @@ public class DashboardController {
         });
     }
 
+    @FXML
+    private void VideoOneContextMenu(ContextMenuEvent event) {
+        if(interruptedCheckBox.isSelected()) {
+            item_setInterrupted.setText("Uninterrupted");
+        } else {
+            item_setInterrupted.setText("Interrupted");
+        }
+        contextMenu.show(videoContainerImageView, event.getScreenX(), event.getScreenY());
+    }
+    @FXML
+    private void VideoOneContextMenu1(ContextMenuEvent event) {
+        if(interruptedCheckBox1.isSelected()) {
+            item_setInterrupted1.setText("Uninterrupted");
+        } else {
+            item_setInterrupted1.setText("Interrupted");
+        }
+        contextMenu1.show(videoContainerImageView1, event.getScreenX(), event.getScreenY());
+    }
+    
+    @FXML
+    private void VideoOneContextMenu2(ContextMenuEvent event) {
+        if(interruptedCheckBox2.isSelected()) {
+            item_setInterrupted2.setText("Uninterrupted");
+        } else {
+            item_setInterrupted2.setText("Interrupted");
+        }
+        contextMenu2.show(videoContainerImageView2, event.getScreenX(), event.getScreenY());
+    }
+    
+    @FXML
+    private void VideoOneContextMenu3(ContextMenuEvent event) {
+        if(interruptedCheckBox3.isSelected()) {
+            item_setInterrupted3.setText("Uninterrupted");
+        } else {
+            item_setInterrupted3.setText("Interrupted");
+        }
+        contextMenu3.show(videoContainerImageView3, event.getScreenX(), event.getScreenY());
+    }
+    public void initMenuItemListeners() {
+        item_chooseVideo.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open Resource File");
+                fileChooser.getExtensionFilters().addAll(
+                        new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
+                File selectedFile = fileChooser.showOpenDialog(rootpane.getScene().getWindow());
+
+                if (selectedFile != null) {
+
+                    videoPath = selectedFile.getPath();
+                    filePathTextField.setText(videoPath);
+                    capture = new VideoCapture(videoPath);
+                    capture.read(currentImage);
+                    videoFPS = capture.get(Videoio.CAP_PROP_FPS);
+                    log.debug("videoFPS: " + videoFPS);
+                    resize(currentImage, currentImage, imageSize);
+                    updateView(currentImage, 1);
+                    if (videoPath != null) {
+                        item_drawCounter.setDisable(false);
+                        item_drawSpeed.setDisable(false);
+                        item_reset.setDisable(false);
+                        item_play.setDisable(false);
+                    }
+                }
+            }
+        });
+        item_setInterrupted.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_setInterrupted.getText().equalsIgnoreCase("Interrupted")) {
+                    interruptedCheckBox.setSelected(true);
+                } else if (item_setInterrupted.getText().equalsIgnoreCase("Uninterrupted")) {
+                    interruptedCheckBox.setSelected(false);
+                }
+            }
+        });
+        item_setArea.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog textInputDialog = new TextInputDialog("Area name");
+                textInputDialog.setHeaderText("Enter area name");
+                textInputDialog.setContentText("Name:");
+                
+                Optional<String> input = textInputDialog.showAndWait();
+                
+                input.ifPresent(new Consumer<String>() {
+                    @Override
+                    public void accept(String t) {
+                        log.info("Area name: " + t);
+                        areaTextField.setText(t.trim().toUpperCase());
+                    }
+                });
+            }
+        });
+        item_drawCounter.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter.setDisable(true);
+                item_drawSpeed.setDisable(true);
+                mouseListenertIsActive = true;
+                startDraw = false;
+                videoContainerImageView.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call2(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call2(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_drawSpeed.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter.setDisable(true);
+                item_drawSpeed.setDisable(true);
+                mouseListenertIsActive2 = true;
+                startDraw = false;
+                videoContainerImageView.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call2(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call2(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_showCounters.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_showCounters.getText().equalsIgnoreCase("Show counters")) {
+                    anchorpane_counters.setVisible(true);
+                    item_showCounters.setText("Hide counters");
+                } else {
+                    anchorpane_counters.setVisible(false);
+                    item_showCounters.setText("Show counters");
+                }
+                
+            }
+        });
+        item_play.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (lineSpeed2 == null && lineCount2 == null) {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Invalid Input");
+                    alert.setHeaderText("Draw sensor lines");
+                    alert.setContentText("Please draw counter line and speed line!");
+
+                    alert.showAndWait();
+                } else {
+                    if (!isPaused) {
+                        isPaused = true;
+                        item_play.setText("Play");
+
+                        item_chooseVideo.setDisable(false);
+
+                        item_drawCounter.setDisable(false);
+                        item_drawSpeed.setDisable(false);
+
+                    } else {
+                        isPaused = false;
+                        item_play.setText("Pause");
+
+                        maxWaitingFPS();
+
+                        item_chooseVideo.setDisable(true);
+
+                        item_drawCounter.setDisable(true);
+                        item_drawSpeed.setDisable(true);
+
+                    }
+
+                    if (!isStarted) {
+                        log.info("mainLoop");
+                        loopBreaker = false;
+                        Thread mainLoop = new Thread(new Loop(1));
+                        mainLoop.start();
+                        isStarted = true;
+                        item_reset.setDisable(false);
+
+                    }
 
 
+                }
+            }
+        });
+        item_reset.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Reset Video");
+                alert.setHeaderText("Are you sure you want to reset video?");
+                alert.setContentText(videoPath);
 
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    resetVideo(1);
+                    log.info("Video has been reset.");
+                    item_chooseVideo.setDisable(false);
+
+                } else {
+                    // ... user chose CANCEL or closed the dialog
+                }
+            }
+        });
+    }
+    
+    public void initMenuItemListeners1() {
+        item_chooseVideo1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open Resource File");
+                fileChooser.getExtensionFilters().addAll(
+                        new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
+                File selectedFile = fileChooser.showOpenDialog(rootpane.getScene().getWindow());
+
+                if (selectedFile != null) {
+
+                    videoPath1 = selectedFile.getPath();
+                    filePathTextField1.setText(videoPath1);
+                    capture1 = new VideoCapture(videoPath1);
+                    capture1.read(currentImage1);
+                    videoFPS1 = capture1.get(Videoio.CAP_PROP_FPS);
+                    log.debug("videoFPS1: " + videoFPS1);
+                    resize(currentImage1, currentImage1, imageSize);
+                    updateView(currentImage1, 2);
+                    if (videoPath1 != null) {
+                        item_drawCounter1.setDisable(false);
+                        item_drawSpeed1.setDisable(false);
+
+                        item_reset1.setDisable(false);
+                        item_play1.setDisable(false);
+                    }
+                }
+            }
+        });
+        item_setInterrupted1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_setInterrupted1.getText().equalsIgnoreCase("Interrupted")) {
+                    interruptedCheckBox1.setSelected(true);
+                } else if (item_setInterrupted1.getText().equalsIgnoreCase("Uninterrupted")) {
+                    interruptedCheckBox1.setSelected(false);
+                }
+            }
+        });
+        item_setArea1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog textInputDialog = new TextInputDialog("Area name");
+                textInputDialog.setHeaderText("Enter area name");
+                textInputDialog.setContentText("Name:");
+                
+                Optional<String> input = textInputDialog.showAndWait();
+                
+                input.ifPresent(new Consumer<String>() {
+                    @Override
+                    public void accept(String t) {
+                        log.info("Area name: " + t);
+                        areaTextField1.setText(t.trim().toUpperCase());
+                    }
+                });
+            }
+        });
+        item_drawCounter1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter1.setDisable(true);
+                item_drawSpeed1.setDisable(true);
+                mouseListenertIsActive = true;
+                startDraw1 = false;
+                videoContainerImageView1.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call1(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call12(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView1.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call1(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call12(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_drawSpeed1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter1.setDisable(true);
+                item_drawSpeed1.setDisable(true);
+                mouseListenertIsActive2 = true;
+                startDraw1 = false;
+                videoContainerImageView1.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call1(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call12(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView1.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call1(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call12(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_showCounters1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_showCounters1.getText().equalsIgnoreCase("Show counters")) {
+                    anchorpane_counters1.setVisible(true);
+                    item_showCounters1.setText("Hide counters");
+                } else {
+                    anchorpane_counters1.setVisible(false);
+                    item_showCounters1.setText("Show counters");
+                }
+                
+            }
+        });
+        item_play1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (lineSpeed12 == null && lineCount12 == null) {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Invalid Input");
+                    alert.setHeaderText("Draw sensor lines");
+                    alert.setContentText("Please draw counter line and speed line!");
+
+                    alert.showAndWait();
+                } else {
+                    if (!isPaused1) {
+                        isPaused1 = true;
+                        item_play1.setText("Play");
+
+                        item_chooseVideo1.setDisable(false);
+
+                        item_drawCounter1.setDisable(false);
+                        item_drawSpeed1.setDisable(false);
+
+                    } else {
+                        isPaused1 = false;
+                        item_play1.setText("Pause");
+
+                        maxWaitingFPS1();
+
+                        item_chooseVideo1.setDisable(true);
+
+                        item_drawCounter1.setDisable(true);
+                        item_drawSpeed1.setDisable(true);
+
+                    }
+
+                    if (!isStarted1) {
+                        log.info("mainLoop");
+                        loopBreaker1 = false;
+                        Thread mainLoop = new Thread(new Loop(2));
+                        mainLoop.start();
+                        isStarted1 = true;
+                        item_reset1.setDisable(false);
+
+                    }
+                }
+            }
+        });
+        item_reset1.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Reset Video");
+                alert.setHeaderText("Are you sure you want to reset video?");
+                alert.setContentText(videoPath);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    resetVideo(2);
+                    log.info("Video has been reset.");
+                    item_chooseVideo1.setDisable(false);
+
+                } else {
+                    // ... user chose CANCEL or closed the dialog
+                }
+            }
+        });
+    }
+    
+    public void initMenuItemListeners2() {
+        item_chooseVideo2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open Resource File");
+                fileChooser.getExtensionFilters().addAll(
+                        new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
+                File selectedFile = fileChooser.showOpenDialog(rootpane.getScene().getWindow());
+
+                if (selectedFile != null) {
+
+                    videoPath2 = selectedFile.getPath();
+                    filePathTextField2.setText(videoPath2);
+                    capture2 = new VideoCapture(videoPath2);
+                    capture2.read(currentImage2);
+                    videoFPS2 = capture2.get(Videoio.CAP_PROP_FPS);
+                    log.debug("videoFPS1: " + videoFPS2);
+                    resize(currentImage2, currentImage2, imageSize);
+                    updateView(currentImage2, 3);
+                    if (videoPath2 != null) {
+                        item_drawCounter2.setDisable(false);
+                        item_drawSpeed2.setDisable(false);
+
+                        item_reset2.setDisable(false);
+                        item_play2.setDisable(false);
+                    }
+                }
+            }
+        });
+        item_setInterrupted2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_setInterrupted2.getText().equalsIgnoreCase("Interrupted")) {
+                    interruptedCheckBox2.setSelected(true);
+                } else if (item_setInterrupted2.getText().equalsIgnoreCase("Uninterrupted")) {
+                    interruptedCheckBox2.setSelected(false);
+                }
+            }
+        });
+        item_setArea2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog textInputDialog = new TextInputDialog("Area name");
+                textInputDialog.setHeaderText("Enter area name");
+                textInputDialog.setContentText("Name:");
+                
+                Optional<String> input = textInputDialog.showAndWait();
+                
+                input.ifPresent(new Consumer<String>() {
+                    @Override
+                    public void accept(String t) {
+                        log.info("Area name: " + t);
+                        areaTextField2.setText(t.trim().toUpperCase());
+                    }
+                });
+            }
+        });
+        item_drawCounter2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter2.setDisable(true);
+                item_drawSpeed2.setDisable(true);
+                mouseListenertIsActive = true;
+                startDraw2 = false;
+                videoContainerImageView2.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_2(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_22(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView2.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_2(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_22(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_drawSpeed2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter2.setDisable(true);
+                item_drawSpeed2.setDisable(true);
+                mouseListenertIsActive2 = true;
+                startDraw2 = false;
+                videoContainerImageView2.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_2(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_22(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView2.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_2(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_22(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_showCounters2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_showCounters2.getText().equalsIgnoreCase("Show counters")) {
+                    anchorpane_counters2.setVisible(true);
+                    item_showCounters2.setText("Hide counters");
+                } else {
+                    anchorpane_counters2.setVisible(false);
+                    item_showCounters2.setText("Show counters");
+                }
+                
+            }
+        });
+        item_play2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (lineSpeed122 == null && lineCount122 == null) {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Invalid Input");
+                    alert.setHeaderText("Draw sensor lines");
+                    alert.setContentText("Please draw counter line and speed line!");
+
+                    alert.showAndWait();
+                } else {
+                    if (!isPaused2) {
+                        isPaused2 = true;
+                        item_play2.setText("Play");
+
+                        item_chooseVideo2.setDisable(false);
+
+                        item_drawCounter2.setDisable(false);
+                        item_drawSpeed2.setDisable(false);
+
+                    } else {
+                        isPaused2 = false;
+                        item_play2.setText("Pause");
+
+                        maxWaitingFPS2();
+
+                        item_chooseVideo2.setDisable(true);
+
+                        item_drawCounter2.setDisable(true);
+                        item_drawSpeed2.setDisable(true);
+
+                    }
+
+                    if (!isStarted2) {
+                        log.info("mainLoop");
+                        loopBreaker2 = false;
+                        Thread mainLoop = new Thread(new Loop(3));
+                        mainLoop.start();
+                        isStarted2 = true;
+                        item_reset2.setDisable(false);
+
+                    }
+                }
+            }
+        });
+        item_reset2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Reset Video");
+                alert.setHeaderText("Are you sure you want to reset video?");
+                alert.setContentText(videoPath);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    resetVideo(3);
+                    log.info("Video has been reset.");
+                    item_chooseVideo2.setDisable(false);
+
+                } else {
+                    // ... user chose CANCEL or closed the dialog
+                }
+            }
+        });
+    }
+    
+    public void initMenuItemListeners3() {
+        item_chooseVideo3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open Resource File");
+                fileChooser.getExtensionFilters().addAll(
+                        new ExtensionFilter("Video Files", "*.avi", "*.mp4", "*.mpg", "*.mov"));
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.home"), "Desktop"));
+                File selectedFile = fileChooser.showOpenDialog(rootpane.getScene().getWindow());
+
+                if (selectedFile != null) {
+
+                    videoPath3 = selectedFile.getPath();
+                    filePathTextField3.setText(videoPath3);
+                    capture3 = new VideoCapture(videoPath3);
+                    capture3.read(currentImage3);
+                    videoFPS3 = capture3.get(Videoio.CAP_PROP_FPS);
+                    log.debug("videoFPS1: " + videoFPS3);
+                    resize(currentImage3, currentImage3, imageSize);
+                    updateView(currentImage3, 4);
+                    if (videoPath3 != null) {
+                        item_drawCounter3.setDisable(false);
+                        item_drawSpeed3.setDisable(false);
+
+                        item_reset3.setDisable(false);
+                        item_play3.setDisable(false);
+                    }
+                }
+            }
+        });
+        item_setInterrupted3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_setInterrupted3.getText().equalsIgnoreCase("Interrupted")) {
+                    interruptedCheckBox3.setSelected(true);
+                } else if (item_setInterrupted3.getText().equalsIgnoreCase("Uninterrupted")) {
+                    interruptedCheckBox3.setSelected(false);
+                }
+            }
+        });
+        item_setArea3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TextInputDialog textInputDialog = new TextInputDialog("Area name");
+                textInputDialog.setHeaderText("Enter area name");
+                textInputDialog.setContentText("Name:");
+                
+                Optional<String> input = textInputDialog.showAndWait();
+                
+                input.ifPresent(new Consumer<String>() {
+                    @Override
+                    public void accept(String t) {
+                        log.info("Area name: " + t);
+                        areaTextField3.setText(t.trim().toUpperCase());
+                    }
+                });
+            }
+        });
+        item_drawCounter3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter3.setDisable(true);
+                item_drawSpeed3.setDisable(true);
+                mouseListenertIsActive = true;
+                startDraw3 = false;
+                videoContainerImageView3.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_3(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_33(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView3.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_3(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_33(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_drawSpeed3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                item_drawCounter3.setDisable(true);
+                item_drawSpeed3.setDisable(true);
+                mouseListenertIsActive2 = true;
+                startDraw3 = false;
+                videoContainerImageView3.setOnMousePressed(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_3(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_33(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+
+                });
+
+                videoContainerImageView3.setOnMouseMoved(new EventHandler<MouseEvent>() {
+                    public void handle(MouseEvent me) {
+                        if (mouseListenertIsActive) {
+                            call_3(me.getButton(), new Point(me.getX(), me.getY()));
+                        } else if (mouseListenertIsActive2) {
+                            call_33(me.getButton(), new Point(me.getX(), me.getY()));
+                        }
+                    }
+                });
+            }
+        });
+        item_showCounters3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(item_showCounters3.getText().equalsIgnoreCase("Show counters")) {
+                    anchorpane_counters3.setVisible(true);
+                    item_showCounters3.setText("Hide counters");
+                } else {
+                    anchorpane_counters3.setVisible(false);
+                    item_showCounters3.setText("Show counters");
+                }
+                
+            }
+        });
+        item_play3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (lineSpeed123 == null && lineCount123 == null) {
+                    Alert alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Invalid Input");
+                    alert.setHeaderText("Draw sensor lines");
+                    alert.setContentText("Please draw counter line and speed line!");
+
+                    alert.showAndWait();
+                } else {
+                    if (!isPaused3) {
+                        isPaused3 = true;
+                        item_play3.setText("Play");
+
+                        item_chooseVideo3.setDisable(false);
+
+                        item_drawCounter3.setDisable(false);
+                        item_drawSpeed3.setDisable(false);
+
+                    } else {
+                        isPaused3 = false;
+                        item_play3.setText("Pause");
+
+                        maxWaitingFPS3();
+
+                        item_chooseVideo3.setDisable(true);
+
+                        item_drawCounter3.setDisable(true);
+                        item_drawSpeed3.setDisable(true);
+
+                    }
+
+                    if (!isStarted3) {
+                        log.info("mainLoop");
+                        loopBreaker3 = false;
+                        Thread mainLoop = new Thread(new Loop(4));
+                        mainLoop.start();
+                        isStarted3 = true;
+                        item_reset3.setDisable(false);
+                    }
+                }
+            }
+        });
+        item_reset3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Alert alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Reset Video");
+                alert.setHeaderText("Are you sure you want to reset video?");
+                alert.setContentText(videoPath);
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                    resetVideo(4);
+                    log.info("Video has been reset.");
+                    item_chooseVideo3.setDisable(false);
+
+                } else {
+                    // ... user chose CANCEL or closed the dialog
+                }
+            }
+        });
+    }
+    
     public class Loop implements Runnable {
 
         private int videoId;
@@ -1222,12 +1492,12 @@ public class DashboardController {
 
                             } else {
 
-                                playPauseButton.setDisable(true);
+                                item_play.setDisable(true);
 
 //                            saveButton.setDisable(false);
-                                chooseFileButton.setDisable(false);
+                                item_chooseVideo.setDisable(false);
                                 Platform.runLater(()->{
-                                    playPauseButton.setText("Play");
+                                    item_play.setText("Play");
                                 });
 
                                 whichFrame = 0;
@@ -1291,11 +1561,11 @@ public class DashboardController {
 
                             } else {
 
-                                playPauseButton1.setDisable(true);
+                                item_play1.setDisable(true);
 
-                                chooseFileButton1.setDisable(false);
+                                item_chooseVideo1.setDisable(false);
                                 Platform.runLater(()->{
-                                    playPauseButton1.setText("Play");
+                                    item_play1.setText("Play");
                                 });
 
                                 whichFrame1 = 0;
@@ -1359,11 +1629,11 @@ public class DashboardController {
 
                             } else {
 
-                                playPauseButton2.setDisable(true);
+                                item_play2.setDisable(true);
 
-                                chooseFileButton2.setDisable(false);
+                                item_chooseVideo2.setDisable(false);
                                 Platform.runLater(()->{
-                                    playPauseButton2.setText("Play");
+                                    item_play2.setText("Play");
                                 });
 
                                 whichFrame2 = 0;
@@ -1427,11 +1697,11 @@ public class DashboardController {
 
                             } else {
 
-                                playPauseButton3.setDisable(true);
+                                item_play3.setDisable(true);
 
-                                chooseFileButton3.setDisable(false);
+                                item_chooseVideo3.setDisable(false);
                                 Platform.runLater(()->{
-                                    playPauseButton3.setText("Play");
+                                    item_play3.setText("Play");
                                 });
 
                                 whichFrame3 = 0;
@@ -1734,8 +2004,8 @@ public class DashboardController {
                 lineCount2 = point;
                 startDraw = false;
                 mouseListenertIsActive = false;
-                counterLineButton.setDisable(false);
-                speedLineButton.setDisable(false);
+                item_drawCounter.setDisable(false);
+                item_drawSpeed.setDisable(false);
 
                 videoContainerImageView.setOnMousePressed(null);
                 videoContainerImageView.setOnMouseMoved(null);
@@ -1759,8 +2029,8 @@ public class DashboardController {
                 lineSpeed2 = point;
                 startDraw = false;
                 mouseListenertIsActive2 = false;
-                counterLineButton.setDisable(false);
-                speedLineButton.setDisable(false);
+                item_drawCounter.setDisable(false);
+                item_drawSpeed.setDisable(false);
                 videoContainerImageView.setOnMousePressed(null);
                 videoContainerImageView.setOnMouseMoved(null);
             }
@@ -1783,8 +2053,8 @@ public class DashboardController {
                 lineCount12 = point;
                 startDraw1 = false;
                 mouseListenertIsActive = false;
-                counterLineButton1.setDisable(false);
-                speedLineButton1.setDisable(false);
+                item_drawCounter1.setDisable(false);
+                item_drawSpeed1.setDisable(false);
 
                 videoContainerImageView1.setOnMousePressed(null);
                 videoContainerImageView1.setOnMouseMoved(null);
@@ -1808,8 +2078,8 @@ public class DashboardController {
                 lineSpeed12 = point;
                 startDraw1 = false;
                 mouseListenertIsActive2 = false;
-                counterLineButton1.setDisable(false);
-                speedLineButton1.setDisable(false);
+                item_drawCounter1.setDisable(false);
+                item_drawSpeed1.setDisable(false);
                 videoContainerImageView1.setOnMousePressed(null);
                 videoContainerImageView1.setOnMouseMoved(null);
             }
@@ -1832,8 +2102,8 @@ public class DashboardController {
                 lineCount122 = point;
                 startDraw2 = false;
                 mouseListenertIsActive = false;
-                counterLineButton2.setDisable(false);
-                speedLineButton2.setDisable(false);
+                item_drawCounter2.setDisable(false);
+                item_drawSpeed2.setDisable(false);
 
                 videoContainerImageView2.setOnMousePressed(null);
                 videoContainerImageView2.setOnMouseMoved(null);
@@ -1857,8 +2127,8 @@ public class DashboardController {
                 lineSpeed122 = point;
                 startDraw2 = false;
                 mouseListenertIsActive2 = false;
-                counterLineButton2.setDisable(false);
-                speedLineButton2.setDisable(false);
+                item_drawCounter2.setDisable(false);
+                item_drawSpeed2.setDisable(false);
                 videoContainerImageView2.setOnMousePressed(null);
                 videoContainerImageView2.setOnMouseMoved(null);
             }
@@ -1881,8 +2151,8 @@ public class DashboardController {
                 lineCount123 = point;
                 startDraw3 = false;
                 mouseListenertIsActive = false;
-                counterLineButton3.setDisable(false);
-                speedLineButton3.setDisable(false);
+                item_drawCounter3.setDisable(false);
+                item_drawSpeed3.setDisable(false);
 
                 videoContainerImageView3.setOnMousePressed(null);
                 videoContainerImageView3.setOnMouseMoved(null);
@@ -1906,8 +2176,8 @@ public class DashboardController {
                 lineSpeed123 = point;
                 startDraw3 = false;
                 mouseListenertIsActive = false;
-                counterLineButton3.setDisable(false);
-                speedLineButton3.setDisable(false);
+                item_drawCounter3.setDisable(false);
+                item_drawSpeed3.setDisable(false);
                 videoContainerImageView3.setOnMousePressed(null);
                 videoContainerImageView3.setOnMouseMoved(null);
             }

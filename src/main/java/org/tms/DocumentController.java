@@ -18,6 +18,7 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import org.tms.utilities.UsersPreferences;
 
 
 public class DocumentController implements Initializable {
@@ -40,10 +41,13 @@ public class DocumentController implements Initializable {
     private Label lowestVolLabel;
     @FXML
     private Label lowestVolValueLabel;
+    @FXML
+    private Label document_username;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        String username = UsersPreferences.getInstance().getPreference().get("username", "Guest");
+        document_username.setText(username);
     }
 
     public void initDocument(String start, String end) {
