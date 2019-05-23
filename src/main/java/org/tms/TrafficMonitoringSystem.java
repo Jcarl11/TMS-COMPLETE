@@ -1,6 +1,8 @@
 
 package org.tms;
 
+import java.io.File;
+import java.net.URL;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.WorkerStateEvent;
@@ -37,9 +39,7 @@ public class TrafficMonitoringSystem extends Application {
                     GlobalObjects.getInstance().openNewWindow("Login.fxml", "Login", StageStyle.DECORATED);
                     return;
                 }
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-                //System.load(System.getProperty("user.dir") + "\\libs\\opencv\\x64\\" + Core.NATIVE_LIBRARY_NAME + ".dll");
-                log.debug(Core.NATIVE_LIBRARY_NAME);
+                System.load(System.getProperty("user.dir") + "\\opencv\\x64\\" + Core.NATIVE_LIBRARY_NAME + ".dll");
 		log.info("native library loaded");
 		Parent root = FXMLLoader.load(getClass().getResource("/fxml/Dashboard.fxml"));
 		log.info("load dashboard");
